@@ -21,20 +21,20 @@ namespace M2
 {
     enum E_Command : int
     {
-        COMMAND_STAND = 0,
-        COMMAND_MOVEDIR = 1,
-        COMMAND_MOVETO = 2,
-        COMMAND_OBSTACLE = 4,
-        COMMAND_SPECIAL = 5,
-        COMMAND_COVER = 6,
-        COMMAND_ANIMPLAY = 7,
-        COMMAND_ACTION = 8,
-        COMMAND_CAR = 9,
-        COMMAND_FIGHT = 10,
-        COMMAND_DEATH = 11,
-        COMMAND_USEOBJECT = 12,
-        COMMAND_ANIMPLAYEFFECT = 13,
-        COMMAND_ADDITACTION = 14
+        COMMAND_STAND = 0,//0x1E
+        COMMAND_MOVEDIR = 1,//0x58
+        COMMAND_MOVETO = 2,//0x2C
+        COMMAND_OBSTACLE = 4,//0x40
+        COMMAND_SPECIAL = 5,//0x20
+        COMMAND_COVER = 6,//0x78
+        COMMAND_ANIMPLAY = 7,//0x94
+        COMMAND_ACTION = 8,//0x68
+        COMMAND_CAR = 9,//0x34
+        COMMAND_FIGHT = 10,//0x78
+        COMMAND_DEATH = 11,//0x24
+        COMMAND_USEOBJECT = 12,//0x2C
+        COMMAND_ANIMPLAYEFFECT = 13,//0x68
+        COMMAND_ADDITACTION = 14//0x20
     };
 
     struct S_HumanCommandMoveDir
@@ -44,6 +44,36 @@ namespace M2
         float y;
         float z;
     };
+
+    class C_Command {
+    public:
+        char pad_0x0000[0xC]; //0x0000
+        uint8_t commandID; //0x000C
+    };
+    
+    class staticHumanCommandCallBaseMoveDir: public C_Command
+    {
+    public:
+        char pad_0x000D[0x18]; //0x000D
+        zpl_vec2 moveVector; //0x0028
+        zpl_vec2 potentialMoveVector; //0x0030
+        char pad_0x0038[0x4]; //0x0038
+        float speedMultiplier; //0x003C
+        char pad_0x0040[0x10]; //0x0040
+        uint8_t moveSpeed; //0x0050
+        char pad_0x0051[0x3]; //0x0051
+        uint32_t int32_0x54; //0x0054
+    }; //Size=0x0058
+    
+    
+
+    class commandDescription
+    {
+    public:
+        __int32 commandPriority; //0x0000 
+        void* commandPtr; //0x0004 
+
+    }; //Size=0x0008
 
     class unknow
     {
@@ -65,6 +95,10 @@ namespace M2
         pad(ICHuman2, pad2, 0x4);
 		C_HumanWeaponController *m_pWeaponController;	//00B0 - 00B4
         C_HumanHeadController   *m_pHeadController;     //00B4 - 00B8
+        pad(ICHuman2, pad4, 0x7C);
+        commandDescription commandsArray[8]; //0x0134 
+        pad(ICHuman2, pad5, 0x4);
+        uint32_t currentCommand; //0x0178
 	};
 
 	class C_Human2 : public ICHuman2
